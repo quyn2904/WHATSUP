@@ -1,0 +1,65 @@
+services:
+  whatsup:
+    image: ${APP_NAME}-api-local
+    container_name: ${APP_NAME}-api-local
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    env_file:
+      - .env
+    ports:
+      - '${APP_PORT}:8000'
+    volumes:
+      - ./src:/app/src
+    command: pnpm start:dev
+    networks:
+      - whatsup-network
+
+  db:
+    image: ${DATABASE_TYPE}
+    container_name: ${DATABASE_NAME}-db-local
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USERNAME}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+      TZ: 'UTC'
+    ports:
+      - '5432:5432'
+    networks:
+      - whatsup-network
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: ${APP_NAME}-redis-local
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    environment:
+      REDIS_ARGS: --requirepass ${REDIS_PASSWORD}
+    networks:
+      - whatsup-network
+
+  maildev:
+    build:
+      context: .
+      dockerfile: maildev.Dockerfile
+    ports:
+      - ${MAIL_CLIENT_PORT}:1080
+      - ${MAIL_PORT}:1025
+    networks:
+      - whatsup-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  whatsup-network:
+    driver: bridge
