@@ -23,4 +23,18 @@ export class MailService {
       },
     });
   }
+
+  async sendForgotPasswordToken(email: string, token: string) {
+    const url = `${this.configService.get('app.url', { infer: true })}/api/v1/auth/verify/forgot-password?token=${token}`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Forgot Password',
+      template: 'email-verification',
+      context: {
+        email: email,
+        url,
+      },
+    });
+  }
 }

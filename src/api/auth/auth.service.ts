@@ -8,7 +8,11 @@ import { ConfigService } from '@nestjs/config';
 import { AllConfigType } from '@/config/config.type';
 import { plainToInstance } from 'class-transformer';
 import { Queue } from 'bullmq';
-import { IEmailJob, IVerifyEmailJob } from '@/common/interfaces/job.interface';
+import {
+  IEmailJob,
+  IPasswordResetJob,
+  IVerifyEmailJob,
+} from '@/common/interfaces/job.interface';
 import { JobName, QueueName } from '@/constants/job.constant';
 import { InjectQueue } from '@nestjs/bullmq';
 import { hashPassword, verifyPassword } from '@/utils/password.util';
@@ -19,6 +23,8 @@ import crypto from 'crypto';
 import { createCacheKey } from '@/utils/cache.util';
 import { CacheKey } from '@/constants/cache.constant';
 import {
+  ForgotPasswordReqDto,
+  ForgotPasswordResDto,
   LoginReqDto,
   LoginResDto,
   RefreshReqDto,
@@ -30,7 +36,6 @@ import { Branded } from '@/common/types/types';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { JwtRefreshPayloadType } from './types/jwt-refresh-payload.type';
-
 type Token = Branded<
   {
     accessToken: string;
@@ -206,6 +211,50 @@ export class AuthService {
     });
   }
 
+  async forgotPassword(
+    dto: ForgotPasswordReqDto,
+  ): Promise<ForgotPasswordResDto> {
+    const user = await this.prismaService.users.findFirst({
+      where: {
+        email: dto.email,
+      },
+    });
+
+    if (!user) {
+      throw new ValidationException(ErrorCode.E003);
+    }
+
+    const token = await this.createForgotPasswordToken({ id: user.id });
+    const tokenExpiresIn = this.configService.getOrThrow('auth.forgotExpires', {
+      infer: true,
+    });
+
+    await this.cacheManager.set(
+      createCacheKey(CacheKey.PASSWORD_RESET, user.id),
+      token,
+      ms(tokenExpiresIn),
+    );
+
+    await this.emailQueue.add(
+      JobName.PASSWORD_RESET,
+      {
+        email: dto.email,
+        token,
+      } as IPasswordResetJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 6000,
+        },
+      },
+    );
+
+    return plainToInstance(ForgotPasswordResDto, {
+      userId: user.id,
+    });
+  }
+
   private async createToken(data: {
     id: string;
     sessonId: string;
@@ -262,6 +311,24 @@ export class AuthService {
           infer: true,
         }),
         expiresIn: this.configService.getOrThrow('auth.confirmEmailExpires', {
+          infer: true,
+        }),
+      },
+    );
+  }
+
+  private async createForgotPasswordToken(data: {
+    id: string;
+  }): Promise<string> {
+    return await this.jwtService.signAsync(
+      {
+        id: data.id,
+      },
+      {
+        secret: this.configService.getOrThrow('auth.forgotSecret', {
+          infer: true,
+        }),
+        expiresIn: this.configService.getOrThrow('auth.forgotExpires', {
           infer: true,
         }),
       },

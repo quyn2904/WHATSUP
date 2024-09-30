@@ -3,6 +3,8 @@ import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { ApiAuth, ApiPublic } from '@/decorators/http.decorators';
 import {
+  ForgotPasswordReqDto,
+  ForgotPasswordResDto,
   LoginReqDto,
   LoginResDto,
   RefreshReqDto,
@@ -53,8 +55,10 @@ export class AuthController {
 
   @ApiPublic()
   @Post('forgot-password')
-  async forgotPassword() {
-    return 'forgot password';
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordReqDto,
+  ): Promise<ForgotPasswordResDto> {
+    return await this.authService.forgotPassword(forgotPasswordDto);
   }
 
   @ApiPublic()
