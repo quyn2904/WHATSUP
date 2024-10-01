@@ -51,6 +51,9 @@ services:
     ports:
       - ${MAIL_CLIENT_PORT}:1080
       - ${MAIL_PORT}:1025
+    environment:
+      - MAIL_CLIENT_PORT
+      - MAIL_PORT
     networks:
       - whatsup-network
 
