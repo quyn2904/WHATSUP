@@ -51,6 +51,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Run compose down container
-        run: docker compose down
+        run: docker-compose down
       - name: Run compose up container
-        run: docker compose up --build -d -f docker-compose.yml
+        run: docker-compose --build -d -f docker-compose.yml up
