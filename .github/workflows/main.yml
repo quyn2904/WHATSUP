@@ -8,6 +8,7 @@ on:
 jobs:
   docker-compose:
     runs-on: self-hosted
+    environment: github
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
