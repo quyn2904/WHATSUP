@@ -64,7 +64,7 @@ export class AuthController {
   @ApiPublic()
   @Post('verify/forgot-password')
   async verifyForgotPassword() {
-    return 'verify forgot password';
+    return 'verify forgot password a';
   }
 
   @ApiPublic()
