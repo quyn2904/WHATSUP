@@ -9,17 +9,20 @@ jobs:
   create-env-file:
     runs-on: self-hosted
     environment: development
+    permissions:
+      contents: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Create .env file
         run: |
           touch .env
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" >> .env
-          echo "APP_NAME=${{ secrets.APP_NAME }}" >> .env
-          echo "APP_URL=${{ secrets.APP_URL }}" >> .env
-          echo "APP_PORT=${{ secrets.APP_PORT }}" >> .env
-          echo "API_PREFIX=${{ secrets.API_PREFIX }}" >> .env
+          echo "NODE_ENV=${{ env.NODE_ENV }}" >> .env
+          echo "APP_NAME=${{ env.APP_NAME }}" >> .env
+          echo "APP_URL=${{ env.APP_URL }}" >> .env
+          echo "APP_PORT=${{ env.APP_PORT }}" >> .env
+          echo "API_PREFIX=${{ env.API_PREFIX }}" >> .env
           echo "APP_DEBUG=${{ secrets.APP_DEBUG }}" >> .env
           echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
           echo "DATABASE_TYPE=${{ secrets.DATABASE_TYPE }}" >> .env
