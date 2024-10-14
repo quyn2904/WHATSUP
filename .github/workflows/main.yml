@@ -15,6 +15,6 @@ jobs:
       # - name: Run compose down container
       #   run: docker-compose down
       - name: Run compose build container
-        run: docker-compose -d -f docker-compose.yaml build
+        run: docker-compose -f docker-compose.yaml build
       - name: Run compose up container
-        run: docker-compose -d -f docker-compose.yaml up
+        run: docker-compose -f docker-compose.yaml up
