@@ -1,7 +1,7 @@
 services:
   whatsup:
-    image: ${APP_NAME}-api-local
-    container_name: ${APP_NAME}-api-local
+    # image: ${APP_NAME}-api
+    container_name: ${APP_NAME}-api
     restart: always
     build:
       context: .
