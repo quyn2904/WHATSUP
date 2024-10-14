@@ -1,7 +1,7 @@
 services:
   whatsup:
     # image: ${APP_NAME}-api
-    container_name: ${APP_NAME}-api
+    container_name: whatsup-api
     restart: always
     build:
       context: .
@@ -17,7 +17,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: ${DATABASE_NAME}-db-local
+    container_name: whatsup-db-local
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -33,7 +33,7 @@ services:
 
   redis:
     image: redis/redis-stack:latest
-    container_name: ${APP_NAME}-redis-local
+    container_name: whatsup-redis-local
     restart: always
     ports:
       - '6379:6379'
