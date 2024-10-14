@@ -8,13 +8,48 @@ on:
 jobs:
   docker-compose:
     runs-on: self-hosted
-    environment: development
+    environment: docker
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-      # - name: Run compose down container
-      #   run: docker-compose down
-      - name: Run compose build container
-        run: docker-compose -f docker-compose.yaml build
+
       - name: Run compose up container
-        run: docker-compose -f docker-compose.yaml up
+        env:
+          NODE_ENV: ${{ secrets.NODE_ENV }}
+          APP_NAME: ${{ secrets.APP_NAME }}
+          APP_URL: ${{ secrets.APP_URL }}
+          APP_PORT: ${{ secrets.APP_PORT }}
+          API_PREFIX: ${{ secrets.API_PREFIX }}
+          APP_DEBUG: ${{ secrets.APP_DEBUG }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          DATABASE_TYPE: ${{ secrets.DATABASE_TYPE }}
+          DATABASE_HOST: ${{ secrets.DATABASE_HOST }}
+          DATABASE_PORT: ${{ secrets.DATABASE_PORT }}
+          DATABASE_USERNAME: ${{ secrets.DATABASE_USERNAME }}
+          DATABASE_PASSWORD: ${{ secrets.DATABASE_PASSWORD }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          DATABASE_SYNCHRONIZE: ${{ secrets.DATABASE_SYNCHRONIZE }}
+          DATABASE_MAX_CONNECTIONS: ${{ secrets.DATABASE_MAX_CONNECTIONS }}
+          REDIS_HOST: ${{ secrets.REDIS_HOST }}
+          REDIS_PORT: ${{ secrets.REDIS_PORT }}
+          REDIS_PASSWORD: ${{ secrets.REDIS_PASSWORD }}
+          REDIS_TLS_ENABLED: ${{ secrets.REDIS_TLS_ENABLED }}
+          AUTH_JWT_SECRET: ${{ secrets.AUTH_JWT_SECRET }}
+          AUTH_JWT_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}
+          AUTH_REFRESH_SECRET: ${{ secrets.AUTH_REFRESH_SECRET }}
+          AUTH_REFRESH_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_REFRESH_TOKEN_EXPIRES_IN }}
+          AUTH_FORGOT_SECRET: ${{ secrets.AUTH_FORGOT_SECRET }}
+          AUTH_FORGOT_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_FORGOT_TOKEN_EXPIRES_IN }}
+          AUTH_CONFIRM_EMAIL_SECRET: ${{ secrets.AUTH_CONFIRM_EMAIL_SECRET }}
+          AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN: ${{ secrets.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN }}
+          MAIL_HOST: ${{ secrets.MAIL_HOST }}
+          MAIL_PORT: ${{ secrets.MAIL_PORT }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASSWORD: ${{ secrets.MAIL_PASSWORD }}
+          MAIL_IGNORE_TLS: ${{ secrets.MAIL_IGNORE_TLS }}
+          MAIL_SECURE: ${{ secrets.MAIL_SECURE }}
+          MAIL_REQUIRE_TLS: ${{ secrets.MAIL_REQUIRE_TLS }}
+          MAIL_DEFAULT_EMAIL: ${{ secrets.MAIL_DEFAULT_EMAIL }}
+          MAIL_DEFAULT_NAME: ${{ secrets.MAIL_DEFAULT_NAME }}
+          MAIL_CLIENT_PORT: ${{ secrets.MAIL_CLIENT_PORT }}
+        run: docker compose -f docker-compose.yaml up --build -d
