@@ -6,57 +6,9 @@ on:
       - main
 
 jobs:
-  create-env-file:
-    runs-on: self-hosted
-    # environment: development
-    env:
-      NODE_ENV: ${{ secrets.NODE_ENV }}
-      APP_NAME: ${{ secrets.APP_NAME }}
-    steps:
-      - name: Create .env file
-        run: |
-          touch .env
-          echo "NODE_ENV=$NODE_ENV" >> .env
-          echo "APP_NAME=$APP_NAME" >> .env
-          echo "APP_URL=${{ env.APP_URL }}" >> .env
-          echo "APP_PORT=${{ env.APP_PORT }}" >> .env
-          echo "API_PREFIX=${{ env.API_PREFIX }}" >> .env
-          echo "APP_DEBUG=${{ secrets.APP_DEBUG }}" >> .env
-          echo "DATABASE_URL=${{ secrets.DATABASE_URL }}" >> .env
-          echo "DATABASE_TYPE=${{ secrets.DATABASE_TYPE }}" >> .env
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
-          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
-          echo "DATABASE_SYNCHRONIZE=${{ secrets.DATABASE_SYNCHRONIZE }}" >> .env
-          echo "DATABASE_MAX_CONNECTIONS=${{ secrets.DATABASE_MAX_CONNECTIONS }}" >> .env
-          echo "REDIS_HOST=${{ secrets.REDIS_HOST }}" >> .env
-          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> .env
-          echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
-          echo "REDIS_TLS_ENABLED=${{ secrets.REDIS_TLS_ENABLED }}" >> .env
-          echo "AUTH_JWT_SECRET=${{ secrets.AUTH_JWT_SECRET }}" >> .env
-          echo "AUTH_JWT_TOKEN_EXPIRES_IN=${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}" >> .env
-          echo "AUTH_REFRESH_SECRET=${{ secrets.AUTH_REFRESH_SECRET }}" >> .env
-          echo "AUTH_REFRESH_TOKEN_EXPIRES_IN=${{ secrets.AUTH_REFRESH_TOKEN_EXPIRES_IN }}" >> .env
-          echo "AUTH_FORGOT_SECRET=${{ secrets.AUTH_FORGOT_SECRET }}" >> .env
-          echo "AUTH_FORGOT_TOKEN_EXPIRES_IN=${{ secrets.AUTH_FORGOT_TOKEN_EXPIRES_IN }}" >> .env
-          echo "AUTH_CONFIRM_EMAIL_SECRET=${{ secrets.AUTH_CONFIRM_EMAIL_SECRET }}" >> .env
-          echo "AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN=${{ secrets.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN }}" >> .env
-          echo "MAIL_HOST=${{ secrets.MAIL_HOST }}" >> .env
-          echo "MAIL_PORT=${{ secrets.MAIL_PORT }}" >> .env
-          echo "MAIL_USER=${{ secrets.MAIL_USER }}" >> .env
-          echo "MAIL_PASSWORD=${{ secrets.MAIL_PASSWORD }}" >> .env
-          echo "MAIL_IGNORE_TLS=${{ secrets.MAIL_IGNORE_TLS }}" >> .env
-          echo "MAIL_SECURE=${{ secrets.MAIL_SECURE }}" >> .env
-          echo "MAIL_REQUIRE_TLS=${{ secrets.MAIL_REQUIRE_TLS }}" >> .env
-          echo "MAIL_DEFAULT_EMAIL=${{ secrets.MAIL_DEFAULT_EMAIL }}" >> .env
-          echo "MAIL_DEFAULT_NAME=${{ secrets.MAIL_DEFAULT_NAME }}" >> .env
-          echo "MAIL_CLIENT_PORT=${{ secrets.MAIL_CLIENT_PORT }}" >> .env
-
   docker-compose:
     runs-on: self-hosted
-    needs: create-env-file
+    environment: development
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
