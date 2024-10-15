@@ -40,6 +40,8 @@ COPY --chown=node:node --from=development /app/tsconfig.json ./tsconfig.json
 COPY --chown=node:node --from=development /app/tsconfig.build.json ./tsconfig.build.json
 COPY --chown=node:node --from=development /app/nest-cli.json ./nest-cli.json
 
+RUN npx prisma generate
+
 RUN pnpm build
 
 # Removes unnecessary packages and re-install only production dependencies
@@ -55,9 +57,6 @@ USER node
 
 FROM node:20-alpine AS production
 WORKDIR /app
-
-# Migrate Prisma schema
-RUN npx prisma generate
 
 RUN npx prisma migrate dev --name init
 
