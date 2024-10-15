@@ -26,6 +26,8 @@ COPY --chown=node:node . .
 # Migrate Prisma schema
 RUN npx prisma generate
 
+RUN npx prisma migrate dev --name init
+
 # Use the node user from the image (non-root)
 USER node
 
