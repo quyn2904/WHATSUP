@@ -9,6 +9,8 @@ services:
       target: development
     ports:
       - '${APP_PORT}:8000'
+    env_file:
+      - .env
     volumes:
       - ./src:/app/src
     command: pnpm start:dev
@@ -17,7 +19,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: whatsup-db-local
+    container_name: whatsup-db
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
@@ -33,7 +35,7 @@ services:
 
   redis:
     image: redis/redis-stack:latest
-    container_name: whatsup-redis-local
+    container_name: whatsup-redis
     restart: always
     ports:
       - '6379:6379'
