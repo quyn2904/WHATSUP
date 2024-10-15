@@ -6,7 +6,6 @@ RUN npm install -g pnpm
 
 # Install Prisma globally
 # RUN pnpm install prisma --save-dev
-RUN npx prisma generate
 
 ###############################
 # BUILD FOR LOCAL DEVELOPMENT #
@@ -20,6 +19,8 @@ COPY --chown=node:node package.json pnpm-lock.yaml ./
 
 # Install all dependencies
 RUN pnpm install
+
+RUN npx prisma generate
 
 # Bundle app source
 COPY --chown=node:node . .
