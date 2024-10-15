@@ -23,11 +23,6 @@ RUN pnpm install
 # Bundle app source
 COPY --chown=node:node . .
 
-# Migrate Prisma schema
-RUN npx prisma generate
-
-RUN npx prisma migrate dev --name init
-
 # Use the node user from the image (non-root)
 USER node
 
@@ -60,6 +55,11 @@ USER node
 
 FROM node:20-alpine AS production
 WORKDIR /app
+
+# Migrate Prisma schema
+RUN npx prisma generate
+
+RUN npx prisma migrate dev --name init
 
 RUN mkdir -p src/generated && chown -R node:node src
 
