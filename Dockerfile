@@ -23,12 +23,12 @@ RUN pnpm install
 # Bundle app source
 COPY --chown=node:node . .
 
-# Use the node user from the image (non-root)
-USER node
-
 RUN npx prisma generate
 
 RUN npx prisma migrate dev --name init
+
+# Use the node user from the image (non-root)
+USER node
 
 #######################
 # BUILD BUILDER IMAGE #
