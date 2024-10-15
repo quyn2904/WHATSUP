@@ -6,6 +6,7 @@ RUN npm install -g pnpm
 
 # Install Prisma globally
 # RUN pnpm install prisma --save-dev
+RUN npx prisma generate
 
 ###############################
 # BUILD FOR LOCAL DEVELOPMENT #
@@ -39,8 +40,6 @@ COPY --chown=node:node --from=development /app/src ./src
 COPY --chown=node:node --from=development /app/tsconfig.json ./tsconfig.json
 COPY --chown=node:node --from=development /app/tsconfig.build.json ./tsconfig.build.json
 COPY --chown=node:node --from=development /app/nest-cli.json ./nest-cli.json
-
-RUN npx prisma generate
 
 RUN pnpm build
 
