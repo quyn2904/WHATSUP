@@ -25,8 +25,6 @@ COPY --chown=node:node . .
 
 RUN npx prisma generate
 
-RUN npx prisma db pull
-
 # Use the node user from the image (non-root)
 USER node
 
@@ -36,6 +34,8 @@ USER node
 
 FROM base AS builder
 WORKDIR /app
+
+RUN npx prisma db pull
 
 # RUN npx prisma migrate dev --name init
 
