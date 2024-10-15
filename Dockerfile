@@ -26,9 +26,9 @@ COPY --chown=node:node . .
 # Use the node user from the image (non-root)
 USER node
 
-RUN npx prisma migrate dev --name init
-
 RUN npx prisma generate
+
+RUN npx prisma migrate dev --name init
 
 #######################
 # BUILD BUILDER IMAGE #
