@@ -20,10 +20,10 @@ COPY --chown=node:node package.json pnpm-lock.yaml ./
 # Install all dependencies
 RUN pnpm install
 
-RUN npx prisma generate
-
 # Bundle app source
 COPY --chown=node:node . .
+
+RUN npx prisma generate
 
 # Use the node user from the image (non-root)
 USER node
