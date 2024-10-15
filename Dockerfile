@@ -25,6 +25,8 @@ COPY --chown=node:node . .
 
 RUN npx prisma generate
 
+RUN npx prisma db pull
+
 # Use the node user from the image (non-root)
 USER node
 
@@ -35,7 +37,7 @@ USER node
 FROM base AS builder
 WORKDIR /app
 
-RUN npx prisma migrate dev --name init
+# RUN npx prisma migrate dev --name init
 
 COPY --chown=node:node package*.json pnpm-lock.yaml ./
 COPY --chown=node:node --from=development /app/node_modules ./node_modules
