@@ -18,7 +18,7 @@ services:
       - whatsup-network
 
   db:
-    image: posgres:latest
+    image: postgres:latest
     container_name: ${DATABASE_NAME}-db-local
     restart: always
     volumes:
