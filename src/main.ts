@@ -23,7 +23,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService<AllConfigType>);
   const reflector = app.get(Reflector);
 
-  app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
+  // app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
 
   app.useGlobalFilters(new GlobalExceptionFilter(configService));
 
