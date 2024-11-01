@@ -12,7 +12,7 @@ services:
     env_file:
       - .env
     ports:
-      - '${APP_PORT}:9999'
+      - '${APP_PORT}:${APP_PORT}'
     volumes:
       - ./src:/app/src
     command: pnpm start:dev
