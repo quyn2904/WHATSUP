@@ -37,8 +37,6 @@ async function bootstrap() {
     }),
   );
 
-  // Enable versioning
-
   app.enableVersioning({
     type: VersioningType.URI,
   });
