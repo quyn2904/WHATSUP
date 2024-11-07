@@ -1,7 +1,7 @@
 import { IsMs } from '@/decorators/validators/is-ms.decorator';
 import validateConfig from '@/utils/validate-config';
 import { registerAs } from '@nestjs/config';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsString } from 'class-validator';
 import { AuthConfig } from './auth-config.type';
 
 class EnvironmentVariablesValidator {
@@ -32,6 +32,20 @@ class EnvironmentVariablesValidator {
   @IsMs()
   AUTH_FORGOT_TOKEN_EXPIRES_IN: string;
 
+  @IsInt()
+  @IsNotEmpty()
+  AUTH_FORGOT_MAX_ATTEMPT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsMs()
+  AUTH_FORGOT_MAX_ATTEMPT_EXPIRS_IN: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @IsMs()
+  AUTH_FORGOT_BLOCK_TIME: string;
+
   @IsString()
   @IsNotEmpty()
   AUTH_CONFIRM_EMAIL_SECRET: string;
@@ -53,6 +67,9 @@ export default registerAs<AuthConfig>('auth', () => {
     refreshExpires: process.env.AUTH_REFRESH_TOKEN_EXPIRES_IN,
     forgotSecret: process.env.AUTH_FORGOT_SECRET,
     forgotExpires: process.env.AUTH_FORGOT_TOKEN_EXPIRES_IN,
+    forgotMaxAttempt: parseInt(process.env.AUTH_FORGOT_MAX_ATTEMPT),
+    forgotMaxAttemptExpiresIn: process.env.AUTH_FORGOT_MAX_ATTEMPT_EXPIRS_IN,
+    forgotBlockTime: process.env.AUTH_FORGOT_BLOCK_TIME,
     confirmEmailSecret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
     confirmEmailExpires: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
   };

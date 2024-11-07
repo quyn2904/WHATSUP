@@ -36,6 +36,7 @@ import { Branded } from '@/common/types/types';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { JwtRefreshPayloadType } from './types/jwt-refresh-payload.type';
+import { VerifyForgotPasswordResDto } from './dto/verify-forgot-password.res.dto';
 type Token = Branded<
   {
     accessToken: string;
@@ -224,6 +225,20 @@ export class AuthService {
       throw new ValidationException(ErrorCode.E003);
     }
 
+    const maxAttempt = await this.configService.getOrThrow(
+      'auth.forgotMaxAttempt',
+      { infer: true },
+    );
+
+    const numberOfAttempt =
+      (await this.cacheManager.get<number>(
+        createCacheKey(CacheKey.PASSWORD_RESET_ATTEMPT, user.id),
+      )) || 0;
+
+    if (numberOfAttempt === maxAttempt) {
+      throw new ValidationException(ErrorCode.E004);
+    }
+
     const token = await this.createForgotPasswordToken({ id: user.id });
     const tokenExpiresIn = this.configService.getOrThrow('auth.forgotExpires', {
       infer: true,
@@ -233,6 +248,17 @@ export class AuthService {
       createCacheKey(CacheKey.PASSWORD_RESET, user.id),
       token,
       ms(tokenExpiresIn),
+    );
+
+    const maxAttemptExpiresIn = this.configService.getOrThrow(
+      'auth.forgotMaxAttemptExpiresIn',
+      { infer: true },
+    );
+
+    await this.cacheManager.set(
+      createCacheKey(CacheKey.PASSWORD_RESET_ATTEMPT, user.id),
+      numberOfAttempt + 1,
+      ms(maxAttemptExpiresIn),
     );
 
     await this.emailQueue.add(
@@ -252,6 +278,20 @@ export class AuthService {
 
     return plainToInstance(ForgotPasswordResDto, {
       userId: user.id,
+    });
+  }
+
+  async verifyForgotPassword(
+    token: string,
+  ): Promise<VerifyForgotPasswordResDto> {
+    const payload = await this.verifyForgotPasswordToken(token);
+
+    await this.cacheManager.del(
+      createCacheKey(CacheKey.PASSWORD_RESET, payload.id),
+    );
+
+    return plainToInstance(VerifyForgotPasswordResDto, {
+      userId: payload.id,
     });
   }
 
@@ -350,6 +390,32 @@ export class AuthService {
     );
 
     if (isSessionBlackListed) {
+      throw new UnauthorizedException();
+    }
+
+    return payload;
+  }
+
+  private async verifyForgotPasswordToken(
+    token: string,
+  ): Promise<JwtPayloadType> {
+    let payload: JwtPayloadType;
+
+    try {
+      payload = this.jwtService.verify(token, {
+        secret: this.configService.getOrThrow('auth.forgotSecret', {
+          infer: true,
+        }),
+      });
+    } catch {
+      throw new UnauthorizedException();
+    }
+
+    const latestToken = await this.cacheManager.get<string>(
+      createCacheKey(CacheKey.PASSWORD_RESET, payload.id),
+    );
+
+    if (!latestToken || latestToken !== token) {
       throw new UnauthorizedException();
     }
 

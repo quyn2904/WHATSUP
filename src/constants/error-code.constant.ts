@@ -10,4 +10,5 @@ export enum ErrorCode {
   E001 = 'user.error.username_or_email_exists',
   E002 = 'user.error.not_found',
   E003 = 'user.error.email_exists',
+  E004 = 'user.error.email_reset_max_attempt',
 }

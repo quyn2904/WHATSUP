@@ -5,6 +5,9 @@ export type AuthConfig = {
   refreshExpires: string;
   forgotSecret: string;
   forgotExpires: string;
+  forgotMaxAttempt: number;
+  forgotMaxAttemptExpiresIn: string;
+  forgotBlockTime: string;
   confirmEmailSecret: string;
   confirmEmailExpires: string;
 };

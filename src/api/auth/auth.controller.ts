@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { ApiAuth, ApiPublic } from '@/decorators/http.decorators';
@@ -62,9 +62,10 @@ export class AuthController {
   }
 
   @ApiPublic()
-  @Post('verify/forgot-password')
-  async verifyForgotPassword() {
-    return 'verify forgot password a';
+  @Get('verify/forgot-password')
+  async verifyForgotPassword(@Query('token') token: string) {
+    console.log('token', token);
+    return await this.authService.verifyForgotPassword(token);
   }
 
   @ApiPublic()
