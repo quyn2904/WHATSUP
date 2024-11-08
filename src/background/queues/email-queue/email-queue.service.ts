@@ -1,4 +1,5 @@
 import {
+  IPasswordChangedJob,
   IPasswordResetJob,
   IVerifyEmailJob,
 } from '@/common/interfaces/job.interface';
@@ -19,5 +20,10 @@ export class EmailQueueService {
   async sendForgotPasswordToken(data: IPasswordResetJob): Promise<void> {
     this.logger.debug(`Sending forgot password token to ${data.email}`);
     await this.mailService.sendForgotPasswordToken(data.email, data.token);
+  }
+
+  async sendPasswordChanged(data: IPasswordChangedJob): Promise<void> {
+    this.logger.debug(`Sending password changed email to ${data.email}`);
+    await this.mailService.sendPasswordChanged(data.email);
   }
 }

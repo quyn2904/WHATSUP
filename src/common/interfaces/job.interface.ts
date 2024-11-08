@@ -9,3 +9,5 @@ export interface IVerifyEmailJob extends IEmailJob {
 export interface IPasswordResetJob extends IEmailJob {
   token: string;
 }
+
+export interface IPasswordChangedJob extends IEmailJob {}

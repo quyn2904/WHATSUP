@@ -11,6 +11,8 @@ import {
   RefreshResDto,
   RegisterReqDto,
   RegisterResDto,
+  ResetPasswordReqDto,
+  ResetPasswordResDto,
 } from './dto';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { CurrentUser } from '@/decorators/current-user.decorator';
@@ -64,14 +66,15 @@ export class AuthController {
   @ApiPublic()
   @Get('verify/forgot-password')
   async verifyForgotPassword(@Query('token') token: string) {
-    console.log('token', token);
     return await this.authService.verifyForgotPassword(token);
   }
 
   @ApiPublic()
   @Post('reset-password')
-  async resetPassword() {
-    return 'reset password';
+  async resetPassword(
+    @Body() resetPasswordReqDto: ResetPasswordReqDto,
+  ): Promise<ResetPasswordResDto> {
+    return await this.authService.resetPassword(resetPasswordReqDto);
   }
 
   @ApiPublic()

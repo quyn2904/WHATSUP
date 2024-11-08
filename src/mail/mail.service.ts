@@ -29,11 +29,22 @@ export class MailService {
 
     await this.mailerService.sendMail({
       to: email,
-      subject: 'Forgot Password',
-      template: 'email-verification',
+      subject: 'Reset Password',
+      template: 'forgot-password',
       context: {
         email: email,
         url,
+      },
+    });
+  }
+
+  async sendPasswordChanged(email: string) {
+    await this.mailerService.sendMail({
+      to: email,
+      subject: 'Password has been Reset',
+      template: 'password-changed',
+      context: {
+        email: email,
       },
     });
   }

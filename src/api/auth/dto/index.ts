@@ -6,3 +6,6 @@ export { RefreshReqDto } from './refresh.req.dto';
 export { RefreshResDto } from './refresh.res.dto';
 export { ForgotPasswordReqDto } from './forgot-password.req.dto';
 export { ForgotPasswordResDto } from './forgot-password.res.dto';
+export { VerifyForgotPasswordResDto } from './verify-forgot-password.res.dto';
+export { ResetPasswordReqDto } from './reset-password.req.dto';
+export { ResetPasswordResDto } from './reset-password.res.dto';

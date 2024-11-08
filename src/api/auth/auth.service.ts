@@ -1,3 +1,4 @@
+import { ResetPasswordReqDto } from './dto/reset-password.req.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '@/database/prisma.service';
@@ -10,6 +11,7 @@ import { plainToInstance } from 'class-transformer';
 import { Queue } from 'bullmq';
 import {
   IEmailJob,
+  IPasswordChangedJob,
   IPasswordResetJob,
   IVerifyEmailJob,
 } from '@/common/interfaces/job.interface';
@@ -31,12 +33,14 @@ import {
   RefreshResDto,
   RegisterReqDto,
   RegisterResDto,
+  ResetPasswordResDto,
+  VerifyForgotPasswordResDto,
 } from './dto';
 import { Branded } from '@/common/types/types';
 import { SYSTEM_USER_ID } from '@/constants/app.constant';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { JwtRefreshPayloadType } from './types/jwt-refresh-payload.type';
-import { VerifyForgotPasswordResDto } from './dto/verify-forgot-password.res.dto';
+
 type Token = Branded<
   {
     accessToken: string;
@@ -286,13 +290,46 @@ export class AuthService {
   ): Promise<VerifyForgotPasswordResDto> {
     const payload = await this.verifyForgotPasswordToken(token);
 
+    return plainToInstance(VerifyForgotPasswordResDto, {
+      userId: payload.id,
+    });
+  }
+
+  async resetPassword(
+    requestPasswordReqDto: ResetPasswordReqDto,
+  ): Promise<ResetPasswordResDto> {
+    const { token, password } = requestPasswordReqDto;
+    const payload = await this.verifyForgotPasswordToken(token);
+    const hashedPassword = await hashPassword(password);
+
+    const user = await this.prismaService.users.update({
+      where: {
+        id: payload.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+
     await this.cacheManager.del(
       createCacheKey(CacheKey.PASSWORD_RESET, payload.id),
     );
 
-    return plainToInstance(VerifyForgotPasswordResDto, {
-      userId: payload.id,
-    });
+    await this.emailQueue.add(
+      JobName.PASSWORD_CHANGED,
+      {
+        email: user.email,
+      } as IPasswordChangedJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 6000,
+        },
+      },
+    );
+
+    return { userId: user.id };
   }
 
   private async createToken(data: {

@@ -5,6 +5,7 @@ import { EmailQueueService } from './email-queue.service';
 import { Job } from 'bullmq';
 import {
   IEmailJob,
+  IPasswordChangedJob,
   IPasswordResetJob,
   IVerifyEmailJob,
 } from '@/common/interfaces/job.interface';
@@ -41,6 +42,10 @@ export class EmailProcessor extends WorkerHost {
       case JobName.PASSWORD_RESET:
         return await this.emailQueueService.sendForgotPasswordToken(
           job.data as unknown as IPasswordResetJob,
+        );
+      case JobName.PASSWORD_CHANGED:
+        return await this.emailQueueService.sendPasswordChanged(
+          job.data as unknown as IPasswordChangedJob,
         );
       default:
         throw new Error(`Unknown job name: ${job.name}`);
