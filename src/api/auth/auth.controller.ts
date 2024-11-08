@@ -13,6 +13,7 @@ import {
   RegisterResDto,
   ResetPasswordReqDto,
   ResetPasswordResDto,
+  VerifyEmailResDto,
 } from './dto';
 import { JwtPayloadType } from './types/jwt-payload.type';
 import { CurrentUser } from '@/decorators/current-user.decorator';
@@ -79,8 +80,8 @@ export class AuthController {
 
   @ApiPublic()
   @Get('verify/email')
-  async verifyEmail() {
-    return 'verify email';
+  async verifyEmail(@Query('token') token: string): Promise<VerifyEmailResDto> {
+    return await this.authService.verifyEmail(token);
   }
 
   @ApiPublic()

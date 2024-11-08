@@ -34,6 +34,7 @@ import {
   RegisterReqDto,
   RegisterResDto,
   ResetPasswordResDto,
+  VerifyEmailResDto,
   VerifyForgotPasswordResDto,
 } from './dto';
 import { Branded } from '@/common/types/types';
@@ -332,6 +333,26 @@ export class AuthService {
     return { userId: user.id };
   }
 
+  async verifyEmail(token: string): Promise<VerifyEmailResDto> {
+    const payload = await this.verifyVerificationToken(token);
+    const user = await this.prismaService.users.update({
+      where: {
+        id: payload.id,
+      },
+      data: {
+        status: 'VERIFIED',
+      },
+    });
+
+    await this.cacheManager.del(
+      createCacheKey(CacheKey.EMAIL_VERIFICATION, user.id),
+    );
+
+    return plainToInstance(VerifyEmailResDto, {
+      userId: user.id,
+    });
+  }
+
   private async createToken(data: {
     id: string;
     sessonId: string;
@@ -457,6 +478,20 @@ export class AuthService {
     }
 
     return payload;
+  }
+
+  private async verifyVerificationToken(
+    token: string,
+  ): Promise<JwtPayloadType> {
+    try {
+      return this.jwtService.verify(token, {
+        secret: this.configService.getOrThrow('auth.confirmEmailSecret', {
+          infer: true,
+        }),
+      });
+    } catch {
+      throw new UnauthorizedException();
+    }
   }
 
   private verifyRefreshToken(token: string): JwtRefreshPayloadType {
