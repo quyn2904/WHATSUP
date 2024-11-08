@@ -13,6 +13,7 @@ import { ApiModule } from '@/api/api.module';
 import { BackgroundModule } from '@/background/background.module';
 import { CacheModule } from '@nestjs/cache-manager';
 import { redisStore } from 'cache-manager-ioredis-yet';
+import { FileModule } from './file/file.module';
 
 @Module({
   imports: [
@@ -49,6 +50,7 @@ import { redisStore } from 'cache-manager-ioredis-yet';
     PrismaModule,
     MailModule,
     ApiModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],
