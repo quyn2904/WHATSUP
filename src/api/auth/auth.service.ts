@@ -33,6 +33,8 @@ import {
   RefreshResDto,
   RegisterReqDto,
   RegisterResDto,
+  ResendVerificationEmailReqDto,
+  ResendVerificationEmailResDto,
   ResetPasswordResDto,
   VerifyEmailResDto,
   VerifyForgotPasswordResDto,
@@ -132,32 +134,7 @@ export class AuthService {
       },
     });
 
-    const token = await this.createVerificationToken({ id: newUser.id });
-    const tokenExpiresIn = this.configService.getOrThrow(
-      'auth.confirmEmailExpires',
-      { infer: true },
-    );
-
-    await this.cacheManager.set(
-      createCacheKey(CacheKey.EMAIL_VERIFICATION, newUser.id),
-      token,
-      ms(tokenExpiresIn),
-    );
-
-    await this.emailQueue.add(
-      JobName.EMAIL_VERIFICATION,
-      {
-        email,
-        token,
-      } as IVerifyEmailJob,
-      {
-        attempts: 3,
-        backoff: {
-          type: 'exponential',
-          delay: 6000,
-        },
-      },
-    );
+    await this.sendVerificationEmail(newUser.id, email);
 
     return plainToInstance(RegisterResDto, {
       userId: newUser.id,
@@ -353,6 +330,32 @@ export class AuthService {
     });
   }
 
+  async resendVerificationEmail(
+    resendVerificationEmailReqDto: ResendVerificationEmailReqDto,
+  ): Promise<ResendVerificationEmailResDto> {
+    const { email } = resendVerificationEmailReqDto;
+
+    const user = await this.prismaService.users.findFirst({
+      where: {
+        email,
+      },
+    });
+
+    if (!user) {
+      throw new ValidationException(ErrorCode.E003);
+    }
+
+    if (user.status === 'VERIFIED') {
+      throw new ValidationException(ErrorCode.E005);
+    }
+
+    await this.sendVerificationEmail(user.id, email);
+
+    return plainToInstance(ResendVerificationEmailResDto, {
+      userId: user.id,
+    });
+  }
+
   private async createToken(data: {
     id: string;
     sessonId: string;
@@ -504,5 +507,35 @@ export class AuthService {
     } catch {
       throw new UnauthorizedException();
     }
+  }
+
+  private async sendVerificationEmail(userId: string, email: string) {
+    const token = await this.createVerificationToken({ id: userId });
+
+    const tokenExpiresIn = this.configService.getOrThrow(
+      'auth.confirmEmailExpires',
+      { infer: true },
+    );
+
+    await this.cacheManager.set(
+      createCacheKey(CacheKey.EMAIL_VERIFICATION, userId),
+      token,
+      ms(tokenExpiresIn),
+    );
+
+    await this.emailQueue.add(
+      JobName.EMAIL_VERIFICATION,
+      {
+        email,
+        token,
+      } as IVerifyEmailJob,
+      {
+        attempts: 3,
+        backoff: {
+          type: 'exponential',
+          delay: 6000,
+        },
+      },
+    );
   }
 }

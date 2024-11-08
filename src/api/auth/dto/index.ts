@@ -10,3 +10,5 @@ export { VerifyForgotPasswordResDto } from './verify-forgot-password.res.dto';
 export { ResetPasswordReqDto } from './reset-password.req.dto';
 export { ResetPasswordResDto } from './reset-password.res.dto';
 export { VerifyEmailResDto } from './verify-email.res.dto';
+export { ResendVerificationEmailReqDto } from './resend-verification-email.req.dto';
+export { ResendVerificationEmailResDto } from './resend-verification-email.res.dto';

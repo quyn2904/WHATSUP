@@ -11,6 +11,8 @@ import {
   RefreshResDto,
   RegisterReqDto,
   RegisterResDto,
+  ResendVerificationEmailReqDto,
+  ResendVerificationEmailResDto,
   ResetPasswordReqDto,
   ResetPasswordResDto,
   VerifyEmailResDto,
@@ -86,7 +88,11 @@ export class AuthController {
 
   @ApiPublic()
   @Post('verify/email/resend')
-  async resendVerifyEmail() {
-    return 'resend verify email';
+  async resendVerifyEmail(
+    @Body() resendVerificationEmailReqDto: ResendVerificationEmailReqDto,
+  ): Promise<ResendVerificationEmailResDto> {
+    return await this.authService.resendVerificationEmail(
+      resendVerificationEmailReqDto,
+    );
   }
 }
