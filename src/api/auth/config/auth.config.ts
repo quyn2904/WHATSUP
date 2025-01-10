@@ -39,7 +39,7 @@ class EnvironmentVariablesValidator {
   @IsString()
   @IsNotEmpty()
   @IsMs()
-  AUTH_FORGOT_MAX_ATTEMPT_EXPIRS_IN: string;
+  AUTH_FORGOT_MAX_ATTEMPT_EXPIRES_IN: string;
 
   @IsString()
   @IsNotEmpty()
@@ -68,7 +68,7 @@ export default registerAs<AuthConfig>('auth', () => {
     forgotSecret: process.env.AUTH_FORGOT_SECRET,
     forgotExpires: process.env.AUTH_FORGOT_TOKEN_EXPIRES_IN,
     forgotMaxAttempt: parseInt(process.env.AUTH_FORGOT_MAX_ATTEMPT),
-    forgotMaxAttemptExpiresIn: process.env.AUTH_FORGOT_MAX_ATTEMPT_EXPIRS_IN,
+    forgotMaxAttemptExpiresIn: process.env.AUTH_FORGOT_MAX_ATTEMPT_EXPIRES_IN,
     forgotBlockTime: process.env.AUTH_FORGOT_BLOCK_TIME,
     confirmEmailSecret: process.env.AUTH_CONFIRM_EMAIL_SECRET,
     confirmEmailExpires: process.env.AUTH_CONFIRM_EMAIL_TOKEN_EXPIRES_IN,
