@@ -26,7 +26,7 @@ async function bootstrap() {
   });
   app.use(helmet());
 
-  app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
+  // app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
   app.useGlobalFilters(new GlobalExceptionFilter(configService));
 
   app.useGlobalGuards(new AuthGuard(reflector, app.get(AuthService)));
