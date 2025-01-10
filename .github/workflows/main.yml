@@ -38,6 +38,9 @@ jobs:
           echo "AUTH_JWT_TOKEN_EXPIRES_IN=${{ secrets.AUTH_JWT_TOKEN_EXPIRES_IN }}" >> .env
           echo "AUTH_REFRESH_SECRET=${{ secrets.AUTH_REFRESH_SECRET }}" >> .env
           echo "AUTH_REFRESH_TOKEN_EXPIRES_IN=${{ secrets.AUTH_REFRESH_TOKEN_EXPIRES_IN }}" >> .env
+          echo "AUTH_FORGOT_MAX_ATTEMPT=${{ secrets.AUTH_FORGOT_MAX_ATTEMPT }}" >> .env
+          echo "AUTH_FORGOT_MAX_ATTEMPT_EXPIRES_IN=${{ secrets.AUTH_FORGOT_MAX_ATTEMPT_EXPIRES_IN }}" >> .env
+          echo "AUTH_FORGOT_BLOCK_TIME=${{ secrets.AUTH_FORGOT_BLOCK_TIME }}" >> .env
           echo "AUTH_FORGOT_SECRET=${{ secrets.AUTH_FORGOT_SECRET }}" >> .env
           echo "AUTH_FORGOT_TOKEN_EXPIRES_IN=${{ secrets.AUTH_FORGOT_TOKEN_EXPIRES_IN }}" >> .env
           echo "AUTH_CONFIRM_EMAIL_SECRET=${{ secrets.AUTH_CONFIRM_EMAIL_SECRET }}" >> .env
