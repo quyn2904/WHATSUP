@@ -29,7 +29,7 @@ model Users {
   updated_at DateTime @updatedAt
   email_verified_token  String?
   forgot_password_token  String?
-  status  USER_STATUS @default(UNVERIFIED)
+  status USER_STATUS @default(UNVERIFIED)
   role USER_ROLE @default(USER)
   avatar_url  String?
   GroupMembers GroupMembers[]

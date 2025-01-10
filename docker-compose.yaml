@@ -1,6 +1,5 @@
 services:
   whatsup:
-    # image: ${APP_NAME}-api
     container_name: whatsup-api
     restart: always
     build:

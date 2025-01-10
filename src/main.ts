@@ -17,14 +17,16 @@ import { AuthService } from './api/auth/auth.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-
-  app.use(helmet());
-
   const configService = app.get(ConfigService<AllConfigType>);
   const reflector = app.get(Reflector);
 
-  app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
+  app.enableCors({
+    // credentials: true,
+    origin: '*',
+  });
+  app.use(helmet());
 
+  app.setGlobalPrefix(configService.get('app.apiPrefix', { infer: true }));
   app.useGlobalFilters(new GlobalExceptionFilter(configService));
 
   app.useGlobalGuards(new AuthGuard(reflector, app.get(AuthService)));

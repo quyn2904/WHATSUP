@@ -78,6 +78,10 @@ export class AuthService {
       },
     });
 
+    if (!user) {
+      throw new ValidationException(ErrorCode.E002);
+    }
+
     const isPasswordValid =
       user && (await verifyPassword(password, user.password));
 
